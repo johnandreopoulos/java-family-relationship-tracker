@@ -77,7 +77,7 @@ public class App {
     static String inputName1;
     static String inputName2;
 
-    static String filePath = "tree.csv";
+    static String filePath = "C://tree.csv";
 
     public static void main(String[] args) {
         menu();
@@ -109,12 +109,18 @@ public class App {
 
             if (choice.equals("1")) {
                 System.out.println("\nThis option allows you to find the family relationship between two people.");
-                System.out
-                        .println("Please enter the names of the two people you want to find the relationship between.");
+                System.out .println("Please enter the names of the two people you want to find the relationship between.");
                 System.out.print("Enter the first name: ");
                 inputName1 = input.nextLine().trim();
                 System.out.print("Enter the second name: ");
                 inputName2 = input.nextLine().trim();
+                while (inputName1.equals("") || inputName2.equals("")) {
+                    System.out.println("Invalid input. Please enter the names again.");
+                    System.out.print("Enter the first name: ");
+                    inputName1 = input.nextLine().trim();
+                    System.out.print("Enter the second name: ");
+                    inputName2 = input.nextLine().trim();
+                }
                 readData();
             } else if (choice.equals("2")) {
                 sortLexicographically();
@@ -228,8 +234,7 @@ public class App {
 
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             while ((line = br.readLine()) != null) {
-                if (line.isEmpty())
-                    continue;
+                if (line.isEmpty()) continue;
                 String[] parts = line.split(csvSplitBy);
                 if (parts.length == 2) {
                     Person person = new Person(parts[0].toLowerCase().trim(), parts[1].toLowerCase().trim());
@@ -251,9 +256,15 @@ public class App {
 
             String relation = findRelation(inputName1.toLowerCase(), inputName2.toLowerCase(), relationMap, personList);
             if (relation != null) {
-                System.out.println(inputName1 + " is " + relation + " of " + inputName2);
+                if (relation == "PERSON_NOT_FOUND") {
+                    System.out.println(inputName1 + " or " + inputName2 + " not found in the database.");
+                } else if (relation == "SAME_PERSON") {
+                    System.out.println("Same person.");
+                } else {
+                    System.out.println(inputName1 + " is " + relation + " of " + inputName2);
+                }
             } else {
-                System.out.println("There is no relation between " + inputName1 + " and " + inputName2);
+                System.out.println("No relation found.");
             }
 
             wantContinue();
@@ -536,7 +547,6 @@ public class App {
             String name2) {
         String gender = getGender(personList, name1);
         String spouseOfName2 = findSpouse(relationMap, personList, name2);
-        System.out.println(spouseOfName2);
         if (isFather(relationMap, personList, name1, spouseOfName2) != null) {
             return gender.equals("man") ? "father-in-law" : "mother-in-law";
         }
@@ -563,8 +573,7 @@ public class App {
         return null;
     }
 
-    private static String isBrotherInLawOrSisterInLaw(Map<String, List<Tree>> relationMap, List<Person> personList,
-            String name1, String name2) {
+    private static String isBrotherInLawOrSisterInLaw(Map<String, List<Tree>> relationMap, List<Person> personList, String name1, String name2) {
         String spouseOfName1 = findSpouse(relationMap, personList, name1);
         String spouseOfName2 = findSpouse(relationMap, personList, name2);
         if (spouseOfName1 == null || spouseOfName2 == null)
@@ -583,8 +592,14 @@ public class App {
     public static String findRelation(String name1, String name2, Map<String, List<Tree>> relationMap, List<Person> personList) {
         String result = null;
 
-        if (name1.equals(name2))
-            return "the same person";
+        if (personList.stream().filter(p -> p.getName().equals(name1)).count() == 0
+                || personList.stream().filter(p -> p.getName().equals(name2)).count() == 0) {
+            return "PERSON_NOT_FOUND";
+        }
+
+        if (name1 == name2) {
+            return "SAME_PERSON";
+        }
 
         // Find husband/wife
         result = isSpouse(relationMap, personList, name1, name2);
@@ -671,6 +686,6 @@ public class App {
         if (result != null)
             return result;
 
-        return result;
+        return null;
     }
 }
