@@ -20,57 +20,13 @@ import java.util.Scanner;
 
 // This class creates a Person object with a name and gender.
 // It also has getter methods to access the name and gender.
-class Person {
-    private String name;
-    private String gender;
-
-    public Person(String name, String gender) {
-        this.name = name;
-        this.gender = gender;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-}
+import classes.Person;
 
 // This class creates a Tree object with a name, relation, and a list of Person
 // objects. It has setter methods to set the name and relation, and a method to
 // add Person objects to the list. It also has getter methods to access the
 // name, relation, and list of Person objects.
-class Tree {
-    private String name;
-    private String relation;
-    private List<Person> persons = new ArrayList<>();
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setRelation(String relation) {
-        this.relation = relation;
-    }
-
-    public void addPerson(Person person) {
-        persons.add(person);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getRelation() {
-        return relation;
-    }
-
-    public List<Person> getPersons() {
-        return persons;
-    }
-}
+import classes.Tree;
 
 public class App {
 
@@ -173,8 +129,7 @@ public class App {
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line; // this is the variable that will store the current line
             while ((line = br.readLine()) != null) {
-                if (line.isEmpty())
-                    continue;
+                if (line.isEmpty()) continue;
                 fileContent += line + "\n";
             }
             return fileContent;
@@ -244,9 +199,8 @@ public class App {
                     tree.setName(parts[0].trim());
                     tree.setRelation(parts[1].trim());
                     tree.addPerson(new Person(parts[2].toLowerCase().trim(), null));
-                    if (relationMap.containsKey(parts[0].toLowerCase().trim())) {
-                        relationMap.get(parts[0].toLowerCase().trim()).add(tree);
-                    } else {
+                    if (relationMap.containsKey(parts[0].toLowerCase().trim())) relationMap.get(parts[0].toLowerCase().trim()).add(tree);
+                    else {
                         List<Tree> trees = new ArrayList<>();
                         trees.add(tree);
                         relationMap.put(parts[0].toLowerCase().trim(), trees);
@@ -256,16 +210,10 @@ public class App {
 
             String relation = findRelation(inputName1.toLowerCase(), inputName2.toLowerCase(), relationMap, personList);
             if (relation != null) {
-                if (relation == "PERSON_NOT_FOUND") {
-                    System.out.println(inputName1 + " or " + inputName2 + " not found in the database.");
-                } else if (relation == "SAME_PERSON") {
-                    System.out.println("Same person.");
-                } else {
-                    System.out.println(inputName1 + " is " + relation + " of " + inputName2);
-                }
-            } else {
-                System.out.println("No relation found.");
-            }
+                if (relation == "PERSON_NOT_FOUND") System.out.println(inputName1 + " or " + inputName2 + " not found in the database.");
+                else if (relation == "SAME_PERSON") System.out.println("Same person.");
+                else System.out.println(inputName1 + " is " + relation + " of " + inputName2);
+            } else System.out.println("No relation found.");
 
             wantContinue();
         } catch (IOException e) {
@@ -286,9 +234,7 @@ public class App {
                 for (Tree tree : trees) {
                     if (tree.getRelation().equals("father")) {
                         for (Person person2 : tree.getPersons()) {
-                            if (person2.getName().equals(name)) {
-                                father = person.getName();
-                            }
+                            if (person2.getName().equals(name)) father = person.getName();
                         }
                     }
                 }
@@ -305,9 +251,7 @@ public class App {
                 for (Tree tree : trees) {
                     if (tree.getRelation().equals("mother")) {
                         for (Person person2 : tree.getPersons()) {
-                            if (person2.getName().equals(name)) {
-                                father = person.getName();
-                            }
+                            if (person2.getName().equals(name))  father = person.getName();
                         }
                     }
                 }
@@ -318,15 +262,12 @@ public class App {
 
     private static String getGender(List<Person> personList, String name) {
         for (Person person : personList) {
-            if (person.getName().equals(name)) {
-                return person.getGender();
-            }
+            if (person.getName().equals(name))  return person.getGender();
         }
         return null;
     }
 
-    private static String isSibling(Map<String, List<Tree>> relationMap, List<Person> personList, String name1,
-            String name2) {
+    private static String isSibling(Map<String, List<Tree>> relationMap, List<Person> personList, String name1, String name2) {
         String fatherOfName1 = findFather(relationMap, personList, name1);
         String fatherOfName2 = findFather(relationMap, personList, name2);
         String motherOfName1 = findMother(relationMap, personList, name1);
@@ -340,16 +281,13 @@ public class App {
         return null;
     }
 
-    private static String isFather(Map<String, List<Tree>> relationMap, List<Person> personList, String name1,
-            String name2) {
+    private static String isFather(Map<String, List<Tree>> relationMap, List<Person> personList, String name1, String name2) {
         if (relationMap.containsKey(name1)) {
             List<Tree> trees = relationMap.get(name1);
             for (Tree tree : trees) {
                 if (tree.getRelation().equals("father")) {
                     for (Person person : tree.getPersons()) {
-                        if (person.getName().equals(name2)) {
-                            return "father";
-                        }
+                        if (person.getName().equals(name2)) return "father";
                     }
                 }
             }
@@ -357,16 +295,13 @@ public class App {
         return null;
     }
 
-    private static String isMother(Map<String, List<Tree>> relationMap, List<Person> personList, String name1,
-            String name2) {
+    private static String isMother(Map<String, List<Tree>> relationMap, List<Person> personList, String name1, String name2) {
         if (relationMap.containsKey(name1)) {
             List<Tree> trees = relationMap.get(name1);
             for (Tree tree : trees) {
                 if (tree.getRelation().equals("mother")) {
                     for (Person person : tree.getPersons()) {
-                        if (person.getName().equals(name2)) {
-                            return "mother";
-                        }
+                        if (person.getName().equals(name2)) return "mother";
                     }
                 }
             }
@@ -374,20 +309,17 @@ public class App {
         return null;
     }
 
-    private static String isChild(Map<String, List<Tree>> relationMap, List<Person> personList, String name1,
-            String name2) {
+    private static String isChild(Map<String, List<Tree>> relationMap, List<Person> personList, String name1, String name2) {
         String fatherOfName1 = isFather(relationMap, personList, name2, name1);
         String motherOfName1 = isMother(relationMap, personList, name2, name1);
         String gender = getGender(personList, name1);
 
-        if (fatherOfName1 != null || motherOfName1 != null)
-            return gender.equals("man") ? "son" : "daughter";
+        if (fatherOfName1 != null || motherOfName1 != null) return gender.equals("man") ? "son" : "daughter";
 
         return null;
     }
 
-    private static String isSpouse(Map<String, List<Tree>> relationMap, List<Person> personList, String name1,
-            String name2) {
+    private static String isSpouse(Map<String, List<Tree>> relationMap, List<Person> personList, String name1, String name2) {
         if (relationMap.containsKey(name1)) {
             List<Tree> trees = relationMap.get(name1);
             for (Tree tree : trees) {
@@ -406,9 +338,7 @@ public class App {
             for (Tree tree : trees) {
                 for (Person person : tree.getPersons()) {
                     if (person.getName().equals(name1)) {
-                        if (tree.getRelation().equals("husband")) {
-                            return "wife";
-                        }
+                        if (tree.getRelation().equals("husband")) return "wife";
                     }
                 }
             }
@@ -424,9 +354,7 @@ public class App {
                 for (Tree tree : trees) {
                     for (Person person2 : tree.getPersons()) {
                         if (person2.getName().equals(name)) {
-                            if (tree.getRelation().equals("husband")) {
-                                return person.getName();
-                            }
+                            if (tree.getRelation().equals("husband")) return person.getName();
                         }
                     }
                 }
@@ -435,22 +363,17 @@ public class App {
         return null;
     }
 
-    private static String isGrandParent(Map<String, List<Tree>> relationMap, List<Person> personList, String name1,
-            String name2) {
+    private static String isGrandParent(Map<String, List<Tree>> relationMap, List<Person> personList, String name1, String name2) {
         List<Tree> trees = relationMap.get(name1);
-        if (trees == null)
-            return null;
+        if (trees == null) return null;
         for (Tree tree : trees) {
             if (tree.getRelation().equals("father") || tree.getRelation().equals("mother")) {
                 List<Tree> trees2 = relationMap.get(tree.getPersons().get(0).getName());
-                if (trees2 == null)
-                    continue;
+                if (trees2 == null) continue;
                 for (Tree tree2 : trees2) {
                     if (tree2.getRelation().equals("father")) {
                         for (Person person2 : tree2.getPersons()) {
-                            if (person2.getName().equals(name2)) {
-                                return tree.getRelation().equals("mother") ? "grandmother" : "grandfather";
-                            }
+                            if (person2.getName().equals(name2)) return tree.getRelation().equals("mother") ? "grandmother" : "grandfather";
                         }
                     }
                 }
@@ -459,15 +382,13 @@ public class App {
         return null;
     }
 
-    private static String isGrandChild(Map<String, List<Tree>> relationMap, List<Person> personList, String name1,
-            String name2) {
+    private static String isGrandChild(Map<String, List<Tree>> relationMap, List<Person> personList, String name1, String name2) {
         String fatherOfName1 = findFather(relationMap, personList, name1);
         String motherOfName1 = findMother(relationMap, personList, name1);
         String fatherOfFatherName1 = findFather(relationMap, personList, fatherOfName1);
         String motherOfFatherName1 = findMother(relationMap, personList, fatherOfName1);
 
-        if ((fatherOfName1 != null && fatherOfFatherName1 != null && motherOfFatherName1 != null)
-                || (motherOfName1 != null && motherOfFatherName1 != null && fatherOfFatherName1 != null)) {
+        if ((fatherOfName1 != null && fatherOfFatherName1 != null && motherOfFatherName1 != null) || (motherOfName1 != null && motherOfFatherName1 != null && fatherOfFatherName1 != null)) {
             if (fatherOfFatherName1.equals(name2) || motherOfFatherName1.equals(name2)) {
                 String gender = getGender(personList, name1);
                 return gender.equals("man") ? "grandson" : "granddaughter";
@@ -477,69 +398,53 @@ public class App {
         return null;
     }
 
-    private static String isUncle(Map<String, List<Tree>> relationMap, List<Person> personList, String name1,
-            String name2) {
+    private static String isUncle(Map<String, List<Tree>> relationMap, List<Person> personList, String name1, String name2) {
         String fatherOfName2 = findFather(relationMap, personList, name2);
         String motherOfName2 = findMother(relationMap, personList, name2);
-        if (isSibling(relationMap, personList, name1, fatherOfName2) != null
-                || isSibling(relationMap, personList, name1, motherOfName2) != null) {
+        if (isSibling(relationMap, personList, name1, fatherOfName2) != null || isSibling(relationMap, personList, name1, motherOfName2) != null) {
             String gender = getGender(personList, name1);
-            if (gender.equals("man"))
-                return "uncle";
+            if (gender.equals("man")) return "uncle";
         }
 
         return null;
     }
 
-    private static String isAunt(Map<String, List<Tree>> relationMap, List<Person> personList, String name1,
-            String name2) {
+    private static String isAunt(Map<String, List<Tree>> relationMap, List<Person> personList, String name1, String name2) {
         String fatherOfName2 = findFather(relationMap, personList, name2);
         String motherOfName2 = findMother(relationMap, personList, name2);
         String spouseOfName1 = findSpouse(relationMap, personList, name1);
-        if (isSibling(relationMap, personList, spouseOfName1, fatherOfName2) != null
-                || isSibling(relationMap, personList, spouseOfName1, motherOfName2) != null) {
-            return "aunt";
-        }
+        if (isSibling(relationMap, personList, spouseOfName1, fatherOfName2) != null || isSibling(relationMap, personList, spouseOfName1, motherOfName2) != null) return "aunt";
 
         return null;
     }
 
-    private static String isNephew(Map<String, List<Tree>> relationMap, List<Person> personList, String name1,
-            String name2) {
+    private static String isNephew(Map<String, List<Tree>> relationMap, List<Person> personList, String name1, String name2) {
         String fatherOfName1 = findFather(relationMap, personList, name1);
         String motherOfName1 = findMother(relationMap, personList, name1);
-        if (isSibling(relationMap, personList, fatherOfName1, name2) != null
-                || isSibling(relationMap, personList, motherOfName1, name2) != null) {
+        if (isSibling(relationMap, personList, fatherOfName1, name2) != null || isSibling(relationMap, personList, motherOfName1, name2) != null) {
             String gender = getGender(personList, name1);
             return gender.equals("man") ? "nephew" : "niece";
         }
         return null;
     }
 
-    private static String isNiece(Map<String, List<Tree>> relationMap, List<Person> personList, String name1,
-            String name2) {
+    private static String isNiece(Map<String, List<Tree>> relationMap, List<Person> personList, String name1, String name2) {
         String fatherOfName1 = findFather(relationMap, personList, name1);
         String motherOfName1 = findMother(relationMap, personList, name1);
         String spouseOfName2 = findSpouse(relationMap, personList, name2);
-        if (isSibling(relationMap, personList, fatherOfName1, spouseOfName2) != null
-                || isSibling(relationMap, personList, motherOfName1, spouseOfName2) != null) {
+        if (isSibling(relationMap, personList, fatherOfName1, spouseOfName2) != null || isSibling(relationMap, personList, motherOfName1, spouseOfName2) != null) {
             String gender = getGender(personList, name1);
             return gender.equals("man") ? "nephew" : "niece";
-
         }
         return null;
     }
 
-    private static String isCousin(Map<String, List<Tree>> relationMap, List<Person> personList, String name1,
-            String name2) {
+    private static String isCousin(Map<String, List<Tree>> relationMap, List<Person> personList, String name1, String name2) {
         String fatherOfName1 = findFather(relationMap, personList, name1);
         String motherOfName1 = findMother(relationMap, personList, name1);
         String fatherOfName2 = findFather(relationMap, personList, name2);
         String motherOfName2 = findMother(relationMap, personList, name2);
-        if (isSibling(relationMap, personList, fatherOfName1, fatherOfName2) != null
-                || isSibling(relationMap, personList, motherOfName1, motherOfName2) != null) {
-            return "cousin";
-        }
+        if (isSibling(relationMap, personList, fatherOfName1, fatherOfName2) != null || isSibling(relationMap, personList, motherOfName1, motherOfName2) != null) return "cousin";
         return null;
     }
 
@@ -547,24 +452,18 @@ public class App {
             String name2) {
         String gender = getGender(personList, name1);
         String spouseOfName2 = findSpouse(relationMap, personList, name2);
-        if (isFather(relationMap, personList, name1, spouseOfName2) != null) {
-            return gender.equals("man") ? "father-in-law" : "mother-in-law";
-        }
+        if (isFather(relationMap, personList, name1, spouseOfName2) != null) return gender.equals("man") ? "father-in-law" : "mother-in-law";
         return null;
     }
 
-    private static String isMotherInLaw(Map<String, List<Tree>> relationMap, List<Person> personList, String name1,
-            String name2) {
+    private static String isMotherInLaw(Map<String, List<Tree>> relationMap, List<Person> personList, String name1, String name2) {
         String gender = getGender(personList, name1);
         String spouseOfName2 = findSpouse(relationMap, personList, name2);
-        if (isMother(relationMap, personList, name1, spouseOfName2) != null) {
-            return gender.equals("man") ? "father-in-law" : "mother-in-law";
-        }
+        if (isMother(relationMap, personList, name1, spouseOfName2) != null) return gender.equals("man") ? "father-in-law" : "mother-in-law";
         return null;
     }
 
-    private static String isSonInLawOrDaughterInLaw(Map<String, List<Tree>> relationMap, List<Person> personList,
-            String name1, String name2) {
+    private static String isSonInLawOrDaughterInLaw(Map<String, List<Tree>> relationMap, List<Person> personList, String name1, String name2) {
         String spouseOfName1 = findSpouse(relationMap, personList, name1);
         if (isFather(relationMap, personList, name2, spouseOfName1) != null) {
             String gender = getGender(personList, name1);
@@ -576,11 +475,8 @@ public class App {
     private static String isBrotherInLawOrSisterInLaw(Map<String, List<Tree>> relationMap, List<Person> personList, String name1, String name2) {
         String spouseOfName1 = findSpouse(relationMap, personList, name1);
         String spouseOfName2 = findSpouse(relationMap, personList, name2);
-        if (spouseOfName1 == null || spouseOfName2 == null)
-            return null;
-        if (isSibling(relationMap, personList, spouseOfName1, spouseOfName2) != null
-                || isSibling(relationMap, personList, name1, spouseOfName2) != null
-                || isSibling(relationMap, personList, name2, spouseOfName1) != null) {
+        if (spouseOfName1 == null || spouseOfName2 == null) return null;
+        if (isSibling(relationMap, personList, spouseOfName1, spouseOfName2) != null || isSibling(relationMap, personList, name1, spouseOfName2) != null || isSibling(relationMap, personList, name2, spouseOfName1) != null) {
             return getGender(personList, name1).equals("man") ? "brother-in-law" : "sister-in-law";
         }
         return null;
@@ -589,102 +485,34 @@ public class App {
     // The methods listed below are used to identify the connection between two
     // people. Each method is evaluated in turn, and when a match is found, the
     // relevant relationship is returned.
-    public static String findRelation(String name1, String name2, Map<String, List<Tree>> relationMap, List<Person> personList) {
-        String result = null;
-
-        if (personList.stream().filter(p -> p.getName().equals(name1)).count() == 0
-                || personList.stream().filter(p -> p.getName().equals(name2)).count() == 0) {
+    public static String findRelation(String name1, String name2, Map<String, List<Tree>> relationMap, List<Person> personList) { 
+        if (personList.stream().filter(p -> p.getName().equals(name1)).count() == 0 || personList.stream().filter(p -> p.getName().equals(name2)).count() == 0) {
             return "PERSON_NOT_FOUND";
         }
 
-        if (name1 == name2) {
-            return "SAME_PERSON";
+        if (name1 == name2) return "SAME_PERSON";
+
+        String[] relationshipArray = {
+            isSpouse(relationMap, personList, name1, name2),
+            isFather(relationMap, personList, name1, name2),
+            isMother(relationMap, personList, name1, name2),
+            isChild(relationMap, personList, name1, name2),
+            isGrandParent(relationMap, personList, name1, name2),
+            isGrandChild(relationMap, personList, name1, name2),
+            isUncle(relationMap, personList, name1, name2),
+            isAunt(relationMap, personList, name1, name2),
+            isNephew(relationMap, personList, name1, name2),
+            isNiece(relationMap, personList, name1, name2),
+            isCousin(relationMap, personList, name1, name2),
+            isFatherInLaw(relationMap, personList, name1, name2),
+            isMotherInLaw(relationMap, personList, name1, name2),
+            isSonInLawOrDaughterInLaw(relationMap, personList, name1, name2),
+            isBrotherInLawOrSisterInLaw(relationMap, personList, name1, name2)
+        };
+
+        for (String relationship : relationshipArray) {
+            if (relationship != null) return relationship;
         }
-
-        // Find husband/wife
-        result = isSpouse(relationMap, personList, name1, name2);
-        if (result != null)
-            return result;
-
-        // Find father
-        result = isFather(relationMap, personList, name1, name2);
-        if (result != null)
-            return result;
-
-        // Find mother
-        result = isMother(relationMap, personList, name1, name2);
-        if (result != null)
-            return result;
-
-        // Find children
-        result = isChild(relationMap, personList, name1, name2);
-        if (result != null)
-            return result;
-
-        // Find husband/wife
-        result = isSpouse(relationMap, personList, name1, name2);
-        if (result != null)
-            return result;
-
-        // Find brother/sister
-        result = isSibling(relationMap, personList, name1, name2);
-        if (result != null)
-            return result;
-
-        // Grandfather/Grandmother
-        result = isGrandParent(relationMap, personList, name1, name2);
-        if (result != null)
-            return result;
-
-        // Grandson/Granddaughter
-        result = isGrandChild(relationMap, personList, name1, name2);
-        if (result != null)
-            return result;
-
-        // Uncle
-        result = isUncle(relationMap, personList, name1, name2);
-        if (result != null)
-            return result;
-
-        // Aunt
-        result = isAunt(relationMap, personList, name1, name2);
-        if (result != null)
-            return result;
-
-        // Nephew
-        result = isNephew(relationMap, personList, name1, name2);
-        if (result != null)
-            return result;
-
-        // Niece
-        result = isNiece(relationMap, personList, name1, name2);
-        if (result != null)
-            return result;
-
-        // Cousin
-        result = isCousin(relationMap, personList, name1, name2);
-        if (result != null)
-            return result;
-
-        // Father in law
-        result = isFatherInLaw(relationMap, personList, name1, name2);
-        if (result != null)
-            return result;
-
-        // Mother in law
-        result = isMotherInLaw(relationMap, personList, name1, name2);
-        if (result != null)
-            return result;
-
-        // Son/Daughter in law
-        result = isSonInLawOrDaughterInLaw(relationMap, personList, name1, name2);
-        if (result != null)
-            return result;
-
-        // Brother/Sister in law
-        result = isBrotherInLawOrSisterInLaw(relationMap, personList, name1, name2);
-        if (result != null)
-            return result;
 
         return null;
     }
